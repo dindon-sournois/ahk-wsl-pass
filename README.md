@@ -8,17 +8,6 @@ Inspired from [rofi-pass](https://github.com/carnager/rofi-pass) but with way le
 ## Features
  - Interactively select password entry with fzf
 
-## Caveats
- - Your password should be the first line of a pass entry
- - User/mail is prefixed by `user:`
- - The format for password files should look like:
-```
-mysecurepassword
-user: myUser
-```
- - OTP is handled by [pass-otp](https://github.com/tadfisher/pass-otp)
- - No other fields supported yet
-
 ## Install
 
  - Install `passdb` in your WSL instance, by default we search for `$HOME/bin/passdb` (PATH is not
@@ -29,11 +18,11 @@ from your `.bashrc`
 
 Dependencies (WSL):
   - fzf
-  - passdb # helper to get specific fields from `pass`
+  - passdb (helper to get specific fields from `pass`)
     - find
     - cut
-    - pass-otp # optionnal
-    - xclip # optionnal
+    - pass-otp (optionnal)
+    - xclip (optionnal, only useful if used within WSL)
 
 Dependencies (Windows):
   - AutoHotKey V2
@@ -55,8 +44,19 @@ ahk-pass.ahk
   passdb := "$HOME/bin/passdb"
 ```
 
+## Caveats
+ - Your password should be the first line of a pass entry
+ - User/mail is prefixed by `user:`
+ - The format for password files should look like:
+```
+mysecurepassword
+user: myUser
+```
+ - OTP is handled by [pass-otp](https://github.com/tadfisher/pass-otp)
+ - No other fields supported yet
+
 ## TODO
  - find passdb from PATH
- - arbitrary entry
+ - arbitrary entry, not only password, user and otp
  - auto-fill
  - prettier terminal (or at least not a maximized window)

@@ -21,16 +21,19 @@ user: myUser
 
 ## Install
 
-Install `passdb` in your WSL instance, by default we search for `$HOME/bin/passdb` (PATH is not
-used). Run `ahk-pass.ahk` with AutoHotKey. Default shortcut is Win+Shift+p
-
-If you want to use passdb from the terminal, you might want to source `passdb_autocomplete.bash`
+ - Install `passdb` in your WSL instance, by default we search for `$HOME/bin/passdb` (PATH is not
+used).
+ - Run `ahk-pass.ahk` with AutoHotKey. Default shortcut is `Win+Shift+p`
+ - If you want to use passdb from the terminal, you might want to source `passdb_autocomplete.bash`
 from your `.bashrc`
 
 Dependencies (WSL):
   - fzf
   - passdb # helper to get specific fields from `pass`
-  - xclip # optionnal, probably only useful if `passdb` is used from terminal
+    - find
+    - cut
+    - pass-otp # optionnal
+    - xclip # optionnal
 
 Dependencies (Windows):
   - AutoHotKey V2
@@ -51,7 +54,6 @@ ahk-pass.ahk
   terminal := "wsl.exe"
   passdb := "$HOME/bin/passdb"
 ```
-
 
 ## TODO
  - find passdb from PATH

@@ -29,12 +29,12 @@ from your `.bashrc`
 
 Dependencies (WSL):
   - fzf
-  - xclip
-  - passdb helper
+  - passdb # helper to get specific fields from `pass`
+  - xclip # optionnal, probably only useful if `passdb` is used from terminal
 
 Dependencies (Windows):
   - AutoHotKey V2
-  - Windows clip.exe (automatically installed?)
+  - clip.exe (automatically installed?)
 
 ## Config
 
@@ -57,3 +57,4 @@ ahk-pass.ahk
  - find passdb from PATH
  - arbitrary entry
  - auto-fill
+ - prettier terminal (or at least not a maximized window)

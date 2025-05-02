@@ -1,0 +1,158 @@
+#!/bin/bash
+set -ue
+set -o pipefail # important for when a field doesn't exist
+
+PASS_STORE=~/.password-store
+USER_FIELD="user"
+
+function usage () {
+cat <<EOF
+Usage: $(basename $0) [-p|-u|-o] [-copy|-show|-paste] PASSNAME
+
+OPTIONS
+
+  -p     Select password field, which should be the first line. (default)
+  -u     Select \`$USER_FIELD:\` field.
+  -o     Select otp field using \`pass otp\`.
+
+  -copy  Copy to xclip clipboard selection (default).
+  -show  Print on stdout.
+  -paste Paste to xclip primary selection.
+
+  -v     Debug mode.
+EOF
+}
+
+function list(){
+  cd $PASS_STORE
+  find -not -path "*/.*" | tail -n +2 | sed -E 's/\.gpg(\x1B\[[0-9]+m)?( ->|$)/\1\2/g' | sed 's@^\./@@'
+  cd - > /dev/null
+}
+
+mode=pwd
+verbose=false
+action=copy
+
+positional=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -p|-pwd)
+    mode=pwd
+    shift
+    ;;
+    -u|-user)
+    mode=user
+    shift
+    ;;
+    -o|-otp)
+    mode=otp
+    shift
+    ;;
+    -l)
+    list
+    exit 0
+    ;;
+    -paste)
+    action=paste
+    shift
+    ;;
+    -copy)
+    action=copy
+    shift
+    ;;
+    -show)
+    action=show
+    shift
+    ;;
+    -v)
+    verbose=true
+    shift
+    ;;
+    -h|-help|--help)
+    usage
+    exit 0
+    ;;
+    -*) # unknown option
+    echo "error, unknown option: $1"
+    exit 1
+    ;;
+    *) # passname
+    positional+=("$1") # save it in an array for later
+    shift
+    ;;
+esac
+done
+set -- "${positional[@]}" # restore positional parameters
+
+# check $# == 1
+if [[ $# != 1 ]]; then
+  shift
+  echo "error, additional argument(s): $@"
+  exit 1
+fi
+
+passname=$1
+
+function process(){
+  case $action in
+  copy)
+    copy
+    ;;
+  show)
+    show
+    ;;
+  paste)
+    paste
+    ;;
+  *)
+    echo "error, unknown action: $action"
+    exit 1
+    ;;
+  esac
+}
+
+function copy(){
+  xclip -selection clipboard
+}
+
+function paste(){
+  xclip -selection primary
+  xclip -o -selection primary
+}
+
+function show(){
+  cat | tr -d \\n
+}
+
+function getfield(){
+  local passname=$1
+  local field=$2
+  local match=$(pass $passname | grep "^$field:")
+  if [[ "x$match" == "x" ]]; then
+    echo "error, no field $field in $passname"
+    exit 1
+  else
+    echo $match | cut -d \: -f2- | sed 's/^ *//' | sed 's/ *$//' | process
+  fi
+}
+
+$verbose && set -x
+
+case $mode in
+pwd)
+  pass $passname | head -n1 | process
+  ;;
+user)
+  getfield $passname $USER_FIELD
+  ;;
+otp)
+  pass otp $passname | process
+  ;;
+*)
+  echo "error, unknown mode: $mode"
+  exit 1
+  ;;
+esac

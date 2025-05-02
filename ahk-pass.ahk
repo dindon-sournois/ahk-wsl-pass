@@ -22,7 +22,7 @@ return
 
 #+p::{
 
-    ; enable alt shortcuts to select which password entry we want
+    ; enable Alt shortcuts to select which password field we want
     SetHotkeys("On")
 
     terminal := "wsl.exe" ; use default WSL instance

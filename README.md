@@ -40,7 +40,7 @@ passdb:
 
 ahk-pass.ahk
 ```ahk
-  terminal := "wsl.exe"
+  terminal := "wsl.exe" ; to use a distrib other than default add `-d DISTRIB`
   passdb := "$HOME/bin/passdb"
 ```
 

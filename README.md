@@ -57,6 +57,5 @@ user: myUser
 
 ## TODO
  - find passdb from PATH
- - arbitrary field, not only password, user and otp
  - auto-fill
  - prettier terminal (or at least not a maximized window)

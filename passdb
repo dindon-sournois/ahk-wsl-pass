@@ -7,13 +7,20 @@ USER_FIELD="user"
 
 function usage () {
 cat <<EOF
-Usage: $(basename $0) [-p|-u|-o] [-copy|-show|-paste] PASSNAME
+Usage: $(basename $0) [-p|-u|-o|-i] [-copy|-show|-paste] PASSNAME
 
 OPTIONS
 
-  -p     Select password field, which should be the first line. (default)
-  -u     Select \`$USER_FIELD:\` field.
-  -o     Select otp field using \`pass otp\`.
+  -p        Select password field, which should be the first line. (default)
+  -u        Select \`$USER_FIELD:\` field.
+  -o        Select otp field using \`pass otp\`.
+  -f FIELD  Select a field of the given password entry.
+  -i        Interactively prompt for a field.
+
+OPTIONS (only useful for AHK script)
+
+  -l     List all paswords entries.
+  -lf    List all fields of a password entry.
 
   -copy  Copy to xclip clipboard selection (default).
   -show  Print on stdout.
@@ -49,6 +56,19 @@ case $key in
     ;;
     -o|-otp)
     mode=otp
+    shift
+    ;;
+    -f|-field)
+    mode=field
+    input_field=$2
+    shift; shift
+    ;;
+    -lf|-list-fields)
+    mode=list_fields
+    shift
+    ;;
+    -i|-interactive)
+    mode=interactive
     shift
     ;;
     -l)
@@ -141,6 +161,19 @@ function getfield(){
 
 $verbose && set -x
 
+function list_fields(){
+  local passname=$1
+  # remove password field, '---' line, and send the rest
+  pass $passname | tail -n +2 | grep \: | cut -d \: -f1
+}
+
+function prompt_for_field(){
+  local passname=$1
+  # remove password field, '---' line, and send the rest to fzf
+  field=$(pass $passname | tail -n +2 | grep \: | cut -d \: -f1 | fzf)
+  echo $field
+}
+
 case $mode in
 pwd)
   pass $passname | head -n1 | process
@@ -150,6 +183,16 @@ user)
   ;;
 otp)
   pass otp $passname | process
+  ;;
+field)
+  getfield $passname $input_field
+  ;;
+list_fields)
+  list_fields $passname
+  ;;
+interactive)
+  input=$(prompt_for_field $passname)
+  getfield $passname $input
   ;;
 *)
   echo "error, unknown mode: $mode"

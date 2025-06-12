@@ -80,7 +80,7 @@ return
     terminal := "wsl.exe" ; use default WSL instance
     passdb := "$HOME/bin/passdb" ; install location of passdb bash script inside WSL
 
-    fzf_header := "alt+u: user,  alt+p: passwd,  alt+o: OTP, alt+i: interactive)`nalt+shift+<KEY>: put in clipboard instead of typing"
+    fzf_header := "alt+u: user,  alt+p: passwd,  alt+o: OTP, alt+i: interactive`nalt+shift+<KEY>: put in clipboard instead of typing"
 
     fzf_opts := "--height=20 --border=rounded --no-scrollbar --header=`"" fzf_header "`""
     fzf := "fzf " fzf_opts
@@ -126,7 +126,7 @@ return
         A_Clipboard := old_clipboard ; restore clipboard
     }
 
-    ; restore alt shortcuts
+; restore alt shortcuts
 Hotkeys_Off:
     SetHotkeys("Off")
     return
